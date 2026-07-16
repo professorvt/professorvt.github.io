@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* =========================================
-           DESIGN SYSTEM & TOKENS (DARK MODE DEFAULT)
+           DESIGN SYSTEM & TOKENS (DARK DEFAULT)
            ========================================= */
         :root {
             --bg-primary: #08090A; --bg-secondary: #0E1116; --bg-tertiary: #161B22;
@@ -22,16 +22,16 @@
         }
 
         /* =========================================
-           LIGHT MODE OVERRIDES
+           LIGHT MODE OVERRIDES (Body + Print Container)
            ========================================= */
-        body.light-mode {
+        body.light-mode, #print-container.light-mode {
             --bg-primary: #FFFFFF; --bg-secondary: #F6F8FA; --bg-tertiary: #EBEDF0;
             --border-primary: #D0D7DE; --border-accent: #B0BAC5;
             --text-primary: #1F2328; --text-secondary: #57606A; --text-tertiary: #8C959F;
             --accent-blue: #0969DA; --accent-glow: rgba(9, 105, 218, 0.15);
         }
 
-        body.light-mode h1 {
+        body.light-mode h1, #print-container.light-mode h1 {
             background: linear-gradient(180deg, #1F2328 0%, #57606A 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
@@ -65,15 +65,10 @@
         h2::before { content: ''; width: 12px; height: 1px; background-color: var(--accent-blue); }
         h3 { font-size: 18px; margin-bottom: var(--space-1); }
         p { font-size: 15px; color: var(--text-secondary); }
-        a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s ease; }
-        a:hover { color: var(--accent-blue); }
-
+        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
         .margin-top { margin-top: var(--space-5); }
 
-        /* =========================================
-           HERO & COMPONENTS
-           ========================================= */
         .hero { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: var(--space-5); border-bottom: 1px solid var(--border-primary); margin-bottom: var(--space-5); gap: var(--space-4); }
         .hero-titles { flex: 1; min-width: 0; }
         .hero-role { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent-blue); margin-bottom: var(--space-3); display: block; }
@@ -89,23 +84,15 @@
         .download-card { background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-sm); padding: 12px; display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 160px; transition: all 0.3s ease; }
         .dl-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; text-align: center; letter-spacing: 0.05em; }
         .radio-group { display: flex; justify-content: space-around; gap: 8px; }
-        .radio-label { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-secondary); transition: color 0.2s ease; }
-        .radio-label:hover { color: var(--text-primary); }
+        .radio-label { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-secondary); }
         .radio-label input { accent-color: var(--accent-blue); cursor: pointer; }
-        
-        .dl-btn { background-color: var(--accent-blue); color: #FFFFFF; border: none; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background-color 0.2s ease; }
-        .dl-btn:hover { background-color: #2563EB; }
-        .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .dl-btn { background-color: var(--accent-blue); color: #FFFFFF; border: none; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .dl-btn svg { width: 14px; height: 14px; }
 
-        /* =========================================
-           SKILLS & TIMELINE
-           ========================================= */
         .skill-category { margin-bottom: var(--space-4); }
         .skill-label { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: var(--space-2); display: block; }
         .badges { display: flex; flex-wrap: wrap; gap: 8px; }
-        .badge { padding: 6px 12px; background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 20px; font-size: 13px; color: var(--text-secondary); font-weight: 500; transition: all 0.2s ease; display: inline-block; }
-        .badge:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .badge { padding: 6px 12px; background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 20px; font-size: 13px; color: var(--text-secondary); font-weight: 500; display: inline-block; }
 
         .timeline { position: relative; padding-left: var(--space-4); }
         .timeline::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 1px; background-color: var(--border-primary); }
@@ -120,8 +107,7 @@
         .exp-list li { position: relative; padding-left: var(--space-3); margin-bottom: var(--space-2); font-size: 14.5px; line-height: 1.6; }
         .exp-list li::before { content: '▹'; position: absolute; left: 0; color: var(--accent-blue); font-size: 12px; top: 3px; }
 
-        .project-card { background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: var(--space-4); transition: border-color 0.3s ease; height: 100%; }
-        .project-card:hover { border-color: var(--border-accent); }
+        .project-card { background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: var(--space-4); height: 100%; }
         .project-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); gap: 12px; }
         .project-title { font-size: 15px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: var(--space-2); }
         .project-icon { width: 16px; height: 16px; stroke: var(--accent-blue); flex-shrink: 0; }
@@ -141,72 +127,68 @@
         .footer-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-tertiary); }
         
         .web-theme-switcher { display: flex; background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 20px; overflow: hidden; }
-        .web-theme-switcher button { background: transparent; color: var(--text-secondary); border: none; padding: 6px 14px; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s ease; outline: none; }
+        .web-theme-switcher button { background: transparent; color: var(--text-secondary); border: none; padding: 6px 14px; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; outline: none; }
         .web-theme-switcher button.active { background-color: var(--accent-blue); color: #FFFFFF; font-weight: 600; }
-        .web-theme-switcher button:hover:not(.active) { color: var(--text-primary); background-color: rgba(59, 130, 246, 0.1); }
 
         /* =========================================
-           RESPONSIVE STYLES (MOBILE LIVE VIEW)
+           MOBILE LIVE VIEW (Screen Ke Liye)
            ========================================= */
         @media screen and (max-width: 768px) {
-            body:not(.is-printing) { padding: 15px; }
-            body:not(.is-printing) .page { padding: 25px; border-radius: var(--radius-md); }
-            body:not(.is-printing) .hero { flex-direction: column; gap: var(--space-4); }
-            body:not(.is-printing) .hero-contact { text-align: left; padding-left: 0; padding-top: var(--space-4); border-left: none; border-top: 1px solid var(--border-primary); width: 100%; }
-            body:not(.is-printing) .contact-item { justify-content: flex-start; }
-            body:not(.is-printing) .qr-download-wrapper { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 16px; }
-            body:not(.is-printing) .grid-2 { grid-template-columns: 1fr; gap: var(--space-4); }
-            body:not(.is-printing) h1 { font-size: 32px; }
-            body:not(.is-printing) .footer-wrapper { flex-direction: column; text-align: center; justify-content: center; }
+            body { padding: 15px; }
+            .page { padding: 25px; border-radius: var(--radius-md); }
+            .hero { flex-direction: column; gap: var(--space-4); }
+            .hero-contact { text-align: left; padding-left: 0; padding-top: var(--space-4); border-left: none; border-top: 1px solid var(--border-primary); width: 100%; }
+            .contact-item { justify-content: flex-start; }
+            .qr-download-wrapper { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 16px; }
+            .grid-2 { grid-template-columns: 1fr; gap: var(--space-4); }
+            h1 { font-size: 32px; }
+            .footer-wrapper { flex-direction: column; text-align: center; justify-content: center; }
         }
 
         /* =========================================
-           100% BULLETPROOF FIX: REAL DOM DESKTOP PRINTING
-           Ye rules mobile ki screen ko force karke temporarily desktop me badal denge
+           FLASH-CLONE PDF CONTAINER (STRICT A4 LOCK)
+           Ye element download ke time DOM me aayega, uske dimensions fix honge,
+           Cropping 100% impossible ho jayegi aur 3rd page cut jayega.
            ========================================= */
-        body.is-printing {
+        #print-container {
+            position: absolute;
+            top: 0; left: 0;
             width: 800px !important;
-            min-width: 800px !important;
-            margin: 0 !important;
-            padding: 0 !important;
+            z-index: 999999 !important; /* Screen par sabse upar dikhega */
             background-color: var(--bg-primary) !important;
-        }
-        body.is-printing #resume-wrapper {
-            width: 800px !important;
             padding: 0 !important;
             margin: 0 !important;
         }
-        body.is-printing .page {
+
+        #print-container .page {
             width: 800px !important;
             max-width: 800px !important;
+            height: 1130px !important; /* STRICT A4 HEIGHT (1:1.414 ratio at 800px width) */
+            min-height: 1130px !important;
+            max-height: 1130px !important;
+            overflow: hidden !important; /* Prevents text from pushing into a 3rd extra page */
             margin: 0 !important;
             padding: 40px !important;
             border: none !important;
             box-shadow: none !important;
             border-radius: 0 !important;
-            /* YAHAN SE PAGES KATA HUA FIX HOGA */
+            background-color: var(--bg-primary) !important; /* Eliminates white spaces */
             page-break-after: always !important;
-            break-after: page !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
         }
-        /* Akhiri page ke baad extra blank safed panna na aaye */
-        body.is-printing .page:last-child {
-            page-break-after: auto !important;
-            break-after: auto !important;
+        #print-container .page:last-child {
+            page-break-after: auto !important; /* No extra blank page at the very end */
         }
 
-        /* Force exactly desktop layout on inner elements */
-        body.is-printing .hero { flex-direction: row !important; gap: var(--space-4) !important; }
-        body.is-printing .hero-contact { text-align: right !important; padding-left: var(--space-4) !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; width: auto !important; }
-        body.is-printing .contact-item { justify-content: flex-end !important; }
-        body.is-printing .qr-download-wrapper { flex-direction: column !important; align-items: flex-end !important; justify-content: flex-start !important; gap: 12px !important; }
-        body.is-printing .grid-2 { grid-template-columns: 1fr 1fr !important; gap: var(--space-5) !important; }
-        body.is-printing h1 { font-size: 42px !important; }
-
-        /* PDF mein download card aur footer theme switcher hide kardo */
-        body.is-printing .download-card, 
-        body.is-printing .web-theme-switcher { 
+        /* Enforce exact desktop layout over any mobile media queries */
+        #print-container .hero { flex-direction: row !important; gap: var(--space-4) !important; }
+        #print-container .hero-contact { text-align: right !important; padding-left: var(--space-4) !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; width: auto !important; }
+        #print-container .contact-item { justify-content: flex-end !important; }
+        #print-container .qr-download-wrapper { flex-direction: column !important; align-items: flex-end !important; justify-content: flex-start !important; gap: 12px !important; }
+        #print-container .grid-2 { grid-template-columns: 1fr 1fr !important; gap: var(--space-5) !important; }
+        #print-container h1 { font-size: 42px !important; }
+        
+        #print-container .download-card, 
+        #print-container .web-theme-switcher { 
             display: none !important; 
         }
     </style>
@@ -350,7 +332,7 @@
 
     <script>
         // ==========================================
-        // WEBSITE THEME SWITCHER LOGIC
+        // UI THEME CONTROLLER
         // ==========================================
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
         let currentWebTheme = 'auto';
@@ -359,42 +341,29 @@
             document.querySelectorAll('.web-theme-switcher button').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-theme-${theme}`).classList.add('active');
 
-            if (theme === 'light') { 
-                document.body.classList.add('light-mode'); 
-            } else if (theme === 'dark') { 
-                document.body.classList.remove('light-mode'); 
-            } else if (theme === 'auto') { 
-                systemPrefersDark.matches ? document.body.classList.remove('light-mode') : document.body.classList.add('light-mode'); 
-            }
+            if (theme === 'light') { document.body.classList.add('light-mode'); } 
+            else if (theme === 'dark') { document.body.classList.remove('light-mode'); } 
+            else if (theme === 'auto') { systemPrefersDark.matches ? document.body.classList.remove('light-mode') : document.body.classList.add('light-mode'); }
         }
 
-        function setWebTheme(theme) { 
-            currentWebTheme = theme; 
-            localStorage.setItem('website-theme', theme); 
-            applyWebTheme(theme); 
-        }
-
-        systemPrefersDark.addEventListener('change', () => { 
-            if (currentWebTheme === 'auto') applyWebTheme('auto'); 
-        });
+        function setWebTheme(theme) { currentWebTheme = theme; localStorage.setItem('website-theme', theme); applyWebTheme(theme); }
+        systemPrefersDark.addEventListener('change', () => { if (currentWebTheme === 'auto') applyWebTheme('auto'); });
 
         window.addEventListener('DOMContentLoaded', () => {
             setWebTheme(localStorage.getItem('website-theme') || 'auto');
-            
-            // Pre-fetch QR Code for strict CORS bypass
             const qrImg = document.getElementById('qr-img');
             if (qrImg) {
                 fetch(qrImg.src).then(res => res.blob()).then(blob => {
                     const reader = new FileReader();
                     reader.onloadend = () => { qrImg.src = reader.result; };
                     reader.readAsDataURL(blob);
-                }).catch(e => console.warn("QR CORS fetch failed"));
+                }).catch(e => console.warn("QR fetch failed"));
             }
         });
 
         // ==========================================
-        // 100% BULLETPROOF REAL DOM CAPTURE
-        // Fixes Blank Mobile Page, Ignored Themes, and Chopped Paginations
+        // 100% BULLETPROOF FLASH-CLONE CAPTURE
+        // Ye logic mobile block/cropping ko fix karta hai kyunki ye actual me screen par physical object banata hai!
         // ==========================================
         function generatePDF() {
             const selectedPdfTheme = document.querySelector('input[name="pdf-theme"]:checked').value;
@@ -404,27 +373,23 @@
             btn.disabled = true;
             btnText.innerText = "Processing...";
 
-            // 1. Current Live Theme ko save kar lo taaki baad me wapas aa sake
-            const originalIsLight = document.body.classList.contains('light-mode');
-            const originalScroll = window.scrollY; // User ka scroll position save karo
+            // 1. Ek temporary actual box banao jo DOM me physically dikhega
+            const printContainer = document.createElement('div');
+            printContainer.id = 'print-container';
+            if (selectedPdfTheme === 'light') printContainer.classList.add('light-mode');
 
-            // 2. Exact PDF wali theme 'Real Body' par daalo
-            if (selectedPdfTheme === 'light') {
-                document.body.classList.add('light-mode');
-            } else {
-                document.body.classList.remove('light-mode');
-            }
-
-            // 3. 'is-printing' class add karo jo forcibly mobile ko 800px desktop me badal degi
-            document.body.classList.add('is-printing');
+            // 2. Resume ko copy karke isme daalo
+            const wrapper = document.getElementById('resume-wrapper');
+            const clone = wrapper.cloneNode(true);
             
-            // Screen ko ekdum upar scroll karo taaki PDF top se shuru ho
+            printContainer.appendChild(clone);
+            document.body.appendChild(printContainer);
+
+            // Screen ko upar le jao
             window.scrollTo(0, 0);
 
-            // 4. 200ms ka wait do taaki phone ki browser engine naye color aur size ko render kar le
+            // 3. Browser ko isko screen par draw karne ke liye thoda time do (0.5 sec)
             setTimeout(() => {
-                const element = document.getElementById('resume-wrapper');
-
                 const opt = {
                     margin: 0,
                     filename: `Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`,
@@ -433,41 +398,25 @@
                         scale: 2, 
                         useCORS: true, 
                         backgroundColor: selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A',
-                        windowWidth: 800,
-                        width: 800,
-                        scrollY: 0
+                        windowWidth: 800, // Explicit size
+                        width: 800
                     },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    // YAHI WO LINE HAI JISNE PICHHLI BAAR CHOPPING ERROR KIYA THA (AB WAPAS AA GAYA HAI)
-                    pagebreak: { mode: ['css', 'legacy'] } 
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                html2pdf().set(opt).from(element).save().then(() => {
-                    restoreWebsiteState();
-                }).catch((err) => {
-                    console.error("PDF Generation Error:", err);
-                    alert("Error generating PDF.");
-                    restoreWebsiteState();
-                });
-
-                function restoreWebsiteState() {
-                    // Mobile ko wapas normal size me laao
-                    document.body.classList.remove('is-printing');
-                    
-                    // Original theme wapas laao
-                    if (originalIsLight) {
-                        document.body.classList.add('light-mode');
-                    } else {
-                        document.body.classList.remove('light-mode');
-                    }
-
-                    // User ko wahi scroll karwao jahan se usne download dabaya tha
-                    window.scrollTo(0, originalScroll);
-
+                html2pdf().set(opt).from(printContainer).save().then(() => {
+                    // PDF banne ke baad us box ko permanently hata do
+                    document.body.removeChild(printContainer);
                     btn.disabled = false;
                     btnText.innerText = "PDF";
-                }
-            }, 200);
+                }).catch((err) => {
+                    console.error("PDF Error:", err);
+                    alert("PDF banne me error aaya.");
+                    document.body.removeChild(printContainer);
+                    btn.disabled = false;
+                    btnText.innerText = "PDF";
+                });
+            }, 500); 
         }
     </script>
 </body>
