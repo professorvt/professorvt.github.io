@@ -21,14 +21,14 @@
             --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px; --space-5: 32px; --space-6: 48px;
         }
 
-        body.light-mode {
+        body.light-mode, .pdf-container.light-mode {
             --bg-primary: #FFFFFF; --bg-secondary: #F6F8FA; --bg-tertiary: #EBEDF0;
             --border-primary: #D0D7DE; --border-accent: #B0BAC5;
             --text-primary: #1F2328; --text-secondary: #57606A; --text-tertiary: #8C959F;
             --accent-blue: #0969DA; --accent-glow: rgba(9, 105, 218, 0.15);
         }
 
-        body.light-mode h1 {
+        body.light-mode h1, .pdf-container.light-mode h1 {
             background: linear-gradient(180deg, #1F2328 0%, #57606A 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
@@ -117,7 +117,8 @@
         .project-desc { font-size: 13.5px; margin-bottom: var(--space-3); color: var(--text-secondary); }
         .tech-stack { display: flex; flex-wrap: wrap; gap: 6px; }
         .tech-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 8px; background-color: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-radius: 4px; }
-        
+        body.light-mode .tech-item, .pdf-container.light-mode .tech-item { background-color: rgba(9, 105, 218, 0.1); }
+
         .info-block { background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: var(--space-4); height: 100%; }
         .info-block h3 { font-size: 15px; color: var(--text-primary); margin-bottom: var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-primary); }
         .cert-item, .edu-item, .highlight-item { margin-bottom: var(--space-3); }
@@ -149,18 +150,36 @@
         }
 
         /* =========================================
-           STRICT PDF GENERATION RULES (Virtual Engine)
-           Ye sirf print engine ke andar lagta hai (onclone mode)
+           STRICT PDF A4 DESKTOP FORCING
+           Ye rule mobile rules ko poori tarah overwrite kar dega
            ========================================= */
-        .pdf-mode { width: 800px !important; background-color: var(--bg-primary) !important; padding: 0 !important; }
-        .pdf-mode .page { width: 800px !important; max-width: 800px !important; padding: 40px !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; margin: 0 !important; page-break-after: always; }
-        .pdf-mode .hero { flex-direction: row !important; gap: var(--space-4) !important; }
-        .pdf-mode .hero-contact { text-align: right !important; padding-left: var(--space-4) !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; width: auto !important; }
-        .pdf-mode .contact-item { justify-content: flex-end !important; }
-        .pdf-mode .qr-download-wrapper { flex-direction: column !important; align-items: flex-end !important; justify-content: flex-start !important; gap: 12px !important; }
-        .pdf-mode .grid-2 { grid-template-columns: 1fr 1fr !important; gap: var(--space-5) !important; }
-        .pdf-mode h1 { font-size: 42px !important; }
-        .pdf-mode .download-card, .pdf-mode .web-theme-switcher { display: none !important; }
+        .pdf-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 800px !important;
+            background-color: var(--bg-primary);
+            z-index: -9999;
+        }
+        
+        .pdf-container .page {
+            width: 800px !important;
+            max-width: 800px !important;
+            padding: 40px !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            page-break-after: always;
+        }
+
+        /* Mobile se Desktop revert karne ke rules */
+        .pdf-container .hero { flex-direction: row !important; gap: var(--space-4) !important; }
+        .pdf-container .hero-contact { text-align: right !important; padding-left: var(--space-4) !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; width: auto !important; }
+        .pdf-container .contact-item { justify-content: flex-end !important; }
+        .pdf-container .qr-download-wrapper { flex-direction: column !important; align-items: flex-end !important; justify-content: flex-start !important; gap: 12px !important; }
+        .pdf-container .grid-2 { grid-template-columns: 1fr 1fr !important; gap: var(--space-5) !important; }
+        .pdf-container h1 { font-size: 42px !important; }
+        .pdf-container .web-theme-switcher { display: none !important; }
     </style>
 </head>
 <body>
@@ -350,7 +369,7 @@
         });
 
         // ==========================================
-        // VIRTUAL IFRAME RENDERING LOGIC (100% BLANK PAGE FIX)
+        // STRICT A4 DESKTOP PDF GENERATION LOGIC
         // ==========================================
         function generatePDF() {
             const selectedPdfTheme = document.querySelector('input[name="pdf-theme"]:checked').value;
@@ -360,45 +379,53 @@
             btn.disabled = true;
             btnText.innerText = "Processing...";
 
-            // Hum existing element ko target karenge, koi clone html document me nahi banayenge
-            const element = document.getElementById('resume-wrapper');
+            // Naya hidden container banaya jiska CSS style bilkul desktop jaisa fix kar diya gaya hai
+            const container = document.createElement('div');
+            container.className = 'pdf-container';
+            if (selectedPdfTheme === 'light') container.classList.add('light-mode');
+            
+            const clone = document.getElementById('resume-wrapper').cloneNode(true);
+            
+            // PDF se faltu button hata do
+            const downloadCardInClone = clone.querySelector('.download-card');
+            if (downloadCardInClone) downloadCardInClone.remove();
+            
+            const themeSwitcher = clone.querySelector('.web-theme-switcher');
+            if (themeSwitcher) themeSwitcher.remove();
+            
+            container.appendChild(clone);
+            document.body.appendChild(container);
 
-            const opt = {
-                margin: 0,
-                filename: `Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`,
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    windowWidth: 800,
-                    width: 800,
-                    // Yeh sabse zaroori hissa hai: Library jab apna virtual iframe banati hai, tab ye function chalta hai
-                    onclone: function(clonedDoc) {
-                        // Virtual iframe me .pdf-mode lagana taaki strict desktop styling apply ho jaye
-                        const clonedWrapper = clonedDoc.getElementById('resume-wrapper');
-                        clonedWrapper.classList.add('pdf-mode');
+            // Engine ko poora time (500ms) diya taaki phone par memory crash/blank page na aaye
+            setTimeout(() => {
+                const opt = {
+                    margin: 0,
+                    filename: `Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`,
+                    image: { type: 'jpeg', quality: 1.0 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true, 
+                        backgroundColor: selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A',
+                        scrollY: 0,
+                        scrollX: 0,
+                        width: 800,          // Engine ko zabardasti bola ki canvas strictly 800px hi draw karna hai
+                        windowWidth: 800     // Engine ko bevakoof banaya ki screen ki size 800px (Desktop) hai
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
 
-                        // Virtual iframe me Light/Dark lagana
-                        if (selectedPdfTheme === 'light') {
-                            clonedDoc.body.classList.add('light-mode');
-                        } else {
-                            clonedDoc.body.classList.remove('light-mode');
-                        }
-                    }
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            // Generate direct from element!
-            html2pdf().set(opt).from(element).save().then(() => {
-                btn.disabled = false;
-                btnText.innerText = "PDF";
-            }).catch((err) => {
-                console.error("PDF Generation Error:", err);
-                alert("Error generating PDF.");
-                btn.disabled = false;
-                btnText.innerText = "PDF";
-            });
+                html2pdf().set(opt).from(container).save().then(() => {
+                    document.body.removeChild(container);
+                    btn.disabled = false;
+                    btnText.innerText = "PDF";
+                }).catch((err) => {
+                    console.error("PDF Generation Error:", err);
+                    alert("Error generating PDF.");
+                    document.body.removeChild(container);
+                    btn.disabled = false;
+                    btnText.innerText = "PDF";
+                });
+            }, 500);
         }
     </script>
 </body>
