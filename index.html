@@ -7,7 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- BYE BYE HTML2PDF. HELLO RAW LIBRARIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <style>
         /* =========================================
            DESIGN SYSTEM & TOKENS (DARK DEFAULT)
@@ -22,16 +26,15 @@
         }
 
         /* =========================================
-           LIGHT MODE OVERRIDES
+           LIGHT MODE OVERRIDES (Live Website)
            ========================================= */
-        body.light-mode {
+        body.light-mode, .light-mode {
             --bg-primary: #FFFFFF; --bg-secondary: #F6F8FA; --bg-tertiary: #EBEDF0;
             --border-primary: #D0D7DE; --border-accent: #B0BAC5;
             --text-primary: #1F2328; --text-secondary: #57606A; --text-tertiary: #8C959F;
             --accent-blue: #0969DA; --accent-glow: rgba(9, 105, 218, 0.15);
         }
-
-        body.light-mode h1 {
+        body.light-mode h1, .light-mode h1 {
             background: linear-gradient(180deg, #1F2328 0%, #57606A 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
@@ -147,6 +150,7 @@
 </head>
 <body>
     <div id="resume-wrapper">
+        <!-- PAGE 1 -->
         <div class="page">
             <header class="hero">
                 <div class="hero-titles">
@@ -163,6 +167,7 @@
                     <div class="contact-item"><span>India</span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
                     
                     <div class="qr-download-wrapper">
+                        <!-- vCard QR -->
                         <div class="qr-code">
                             <img id="qr-img" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=08090A&bgcolor=FFFFFF&data=BEGIN%3AVCARD%0AVERSION%3A3.0%0AN%3ATiwari%3BV.%20Vaibhav%3B%3B%3B%0AFN%3AV.%20Vaibhav%20Tiwari%0AORG%3ACloud%20Up%20Codex%20LLP%0ATITLE%3ASenior%20Software%20%26%20AI%20Automation%20Engineer%0ATEL%3BTYPE%3DWORK%2CVOICE%3A%2B919208495432%0ATEL%3BTYPE%3DCELL%2CVOICE%3A%2B919451807892%0AEMAIL%3Av.vaibhavtiwari%40gmail.com%0AURL%3Ahttps%3A%2F%2Fprofessorvt.github.io%0AEND%3AVCARD" alt="Contact QR">
                         </div>
@@ -240,6 +245,7 @@
             </section>
         </div>
 
+        <!-- PAGE 2 -->
         <div class="page">
             <header class="hero" style="padding-bottom: 20px; margin-bottom: 20px;">
                 <div class="hero-titles"><span class="hero-role">Continued — V. Vaibhav Tiwari</span><h1 style="font-size: 28px;">Education & Technical Credentials</h1></div>
@@ -304,7 +310,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             setWebTheme(localStorage.getItem('website-theme') || 'auto');
             
-            // Pre-fetch QR to Base64 so html2canvas never stalls on CORS
             const qrImg = document.getElementById('qr-img');
             if (qrImg) {
                 fetch(qrImg.src).then(res => res.blob()).then(blob => {
@@ -316,100 +321,95 @@
         });
 
         // ==========================================
-        // 100% BULLETPROOF FIX: EXACT PIXEL MAPPING
+        // KHUD KA CUSTOM PDF ENGINE (Bye-bye html2pdf.js)
         // ==========================================
-        function generatePDF() {
-            const selectedPdfTheme = document.querySelector('input[name="pdf-theme"]:checked').value;
+        async function generatePDF() {
+            // Radio se theme select karo
+            const themeRadios = document.getElementsByName('pdf-theme');
+            let selectedPdfTheme = 'dark';
+            for (let i = 0; i < themeRadios.length; i++) {
+                if (themeRadios[i].checked) { selectedPdfTheme = themeRadios[i].value; break; }
+            }
+
             const btn = document.getElementById('btn-download');
             const btnText = document.getElementById('btn-text');
-            
             btn.disabled = true;
             btnText.innerText = "Processing...";
 
-            const element = document.getElementById('resume-wrapper');
+            try {
+                // 1. RAW jsPDF engine start karo (A4 ratio lock)
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [800, 1131] });
 
-            const opt = {
-                margin: 0,
-                filename: `Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`,
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    windowWidth: 800, // Forces desktop width
-                    backgroundColor: selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A',
-                    onclone: function(clonedDoc) {
-                        const clonedWrapper = clonedDoc.getElementById('resume-wrapper');
-                        
-                        // 1. Force the correct Theme
-                        if (selectedPdfTheme === 'light') {
-                            clonedDoc.body.classList.add('light-mode');
-                            clonedDoc.body.style.backgroundColor = '#FFFFFF';
-                        } else {
-                            clonedDoc.body.classList.remove('light-mode');
-                            clonedDoc.body.style.backgroundColor = '#08090A';
-                        }
+                // 2. Ghost Container (Phone ke display se completely alag)
+                const ghostContainer = document.createElement('div');
+                ghostContainer.style.position = 'absolute';
+                ghostContainer.style.top = '0';
+                ghostContainer.style.left = '-9999px'; // User ko nahi dikhega
+                ghostContainer.style.width = '800px';  // FORCE DESKTOP WIDTH
+                
+                // Theme apply
+                if (selectedPdfTheme === 'light') ghostContainer.classList.add('light-mode');
+                document.body.appendChild(ghostContainer);
 
-                        // 2. Hide Buttons
-                        const dlCard = clonedDoc.querySelector('.download-card');
-                        if (dlCard) dlCard.style.display = 'none';
-                        const themeSwitcher = clonedDoc.querySelector('.web-theme-switcher');
-                        if (themeSwitcher) themeSwitcher.style.display = 'none';
+                // 3. Auto-pagination ko dhakka maaro, hum strictly har `.page` class ko alag uthayenge
+                const originalPages = document.querySelectorAll('#resume-wrapper .page');
+                
+                for (let i = 0; i < originalPages.length; i++) {
+                    const clone = originalPages[i].cloneNode(true);
 
-                        // 3. Force exact Desktop Layout explicitly (Overrides mobile CSS)
-                        clonedWrapper.style.width = '800px';
-                        clonedWrapper.style.maxWidth = '800px';
-                        clonedWrapper.style.margin = '0';
-                        clonedWrapper.style.padding = '0';
-                        clonedWrapper.style.gap = '0'; // Removes gap between pages to stop 3rd page cut
-                        
-                        const hero = clonedDoc.querySelector('.hero');
-                        if(hero) { hero.style.flexDirection = 'row'; hero.style.gap = '24px'; }
-                        
-                        const heroContact = clonedDoc.querySelector('.hero-contact');
-                        if(heroContact) { 
-                            heroContact.style.textAlign = 'right'; 
-                            heroContact.style.paddingLeft = '24px'; 
-                            heroContact.style.paddingTop = '0'; 
-                            heroContact.style.borderLeft = '1px solid var(--border-primary)'; 
-                            heroContact.style.borderTop = 'none'; 
-                            heroContact.style.width = 'auto';
-                        }
+                    // 4. Download buttons aur switcher ko permanent delete kar do clone se
+                    const dlCard = clone.querySelector('.download-card');
+                    if (dlCard) dlCard.remove();
+                    
+                    const themeSwitcher = clone.querySelector('.web-theme-switcher');
+                    if (themeSwitcher) themeSwitcher.remove();
 
-                        const grids = clonedDoc.querySelectorAll('.grid-2');
-                        grids.forEach(g => { g.style.display = 'grid'; g.style.gridTemplateColumns = '1fr 1fr'; g.style.gap = '32px'; });
+                    // 5. Explicitly force A4 layout directly on the clone via JS
+                    clone.style.width = '800px';
+                    clone.style.height = '1131px';
+                    clone.style.margin = '0';
+                    clone.style.padding = '40px';
+                    clone.style.border = 'none';
+                    clone.style.boxShadow = 'none';
+                    clone.style.borderRadius = '0';
+                    clone.style.backgroundColor = selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A';
 
-                        const qrWrap = clonedDoc.querySelector('.qr-download-wrapper');
-                        if(qrWrap) { qrWrap.style.flexDirection = 'column'; qrWrap.style.alignItems = 'flex-end'; }
+                    ghostContainer.innerHTML = ''; 
+                    ghostContainer.appendChild(clone);
 
-                        // 4. Force Perfect A4 Size on Pages
-                        const pages = clonedDoc.querySelectorAll('.page');
-                        pages.forEach(page => {
-                            page.style.width = '800px';
-                            // 1131px is the exact mathematical height for an A4 page at 800px width
-                            page.style.minHeight = '1131px'; 
-                            page.style.maxHeight = '1131px';
-                            page.style.margin = '0';
-                            page.style.border = 'none';
-                            page.style.borderRadius = '0';
-                            page.style.boxShadow = 'none';
-                            page.style.backgroundColor = selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A';
-                        });
-                    }
-                },
-                // YAHI MAIN TRICK HAI: PDF format 'mm' ki jagah 'px' use karna
-                // Isse conversion errors khatam hote hain aur cropping theek ho jati hai!
-                jsPDF: { unit: 'px', format: [800, 1131], orientation: 'portrait' }
-            };
+                    // Thoda ruko taaki CSS DOM me register ho jaye
+                    await new Promise(r => setTimeout(r, 200));
 
-            html2pdf().set(opt).from(element).save().then(() => {
+                    // 6. html2canvas se HD screenshot lo
+                    const canvas = await html2canvas(clone, {
+                        scale: 2, 
+                        useCORS: true,
+                        width: 800,
+                        height: 1131,
+                        backgroundColor: selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A'
+                    });
+
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+                    // 7. Image ko PDF me paste karo
+                    if (i > 0) pdf.addPage([800, 1131], 'portrait');
+                    pdf.addImage(imgData, 'JPEG', 0, 0, 800, 1131);
+                }
+
+                // File Download
+                pdf.save(`Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`);
+                
+                // Kachra saaf
+                document.body.removeChild(ghostContainer);
+
+            } catch (error) {
+                console.error("Custom Engine Error:", error);
+                alert("PDF banne me error aaya.");
+            } finally {
                 btn.disabled = false;
                 btnText.innerText = "PDF";
-            }).catch((err) => {
-                console.error("PDF Error:", err);
-                alert("Error generating PDF.");
-                btn.disabled = false;
-                btnText.innerText = "PDF";
-            });
+            }
         }
     </script>
 </body>
