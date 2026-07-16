@@ -9,83 +9,353 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* =========================================
+           DESIGN SYSTEM & TOKENS (DARK MODE)
+           ========================================= */
         :root {
-            --bg-primary: #08090A; --bg-secondary: #0E1116; --bg-tertiary: #161B22;
-            --border-primary: #1F242C; --border-accent: #2F343C;
-            --text-primary: #E6EDF3; --text-secondary: #9DA5B4; --text-tertiary: #6B7280;
-            --accent-blue: #3B82F6; --accent-glow: rgba(59, 130, 246, 0.15);
-            --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px;
-            --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px; --space-5: 32px; --space-6: 48px;
+            --bg-primary: #08090A;
+            --bg-secondary: #0E1116;
+            --bg-tertiary: #161B22;
+            --border-primary: #1F242C;
+            --border-accent: #2F343C;
+            
+            --text-primary: #E6EDF3;
+            --text-secondary: #9DA5B4;
+            --text-tertiary: #6B7280;
+            
+            --accent-blue: #3B82F6;
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 16px;
+            --space-4: 24px;
+            --space-5: 32px;
+            --space-6: 48px;
         }
+
+        /* =========================================
+           LIGHT MODE OVERRIDES
+           ========================================= */
         body.light-mode, .pdf-container.light-mode {
-            --bg-primary: #FFFFFF; --bg-secondary: #F6F8FA; --bg-tertiary: #EBEDF0;
-            --border-primary: #D0D7DE; --border-accent: #B0BAC5;
-            --text-primary: #1F2328; --text-secondary: #57606A; --text-tertiary: #8C959F;
-            --accent-blue: #0969DA; --accent-glow: rgba(9, 105, 218, 0.15);
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F6F8FA;
+            --bg-tertiary: #EBEDF0;
+            --border-primary: #D0D7DE;
+            --border-accent: #B0BAC5;
+            
+            --text-primary: #1F2328;
+            --text-secondary: #57606A;
+            --text-tertiary: #8C959F;
+            
+            --accent-blue: #0969DA;
+            --accent-glow: rgba(9, 105, 218, 0.15);
         }
+
         body.light-mode h1, .pdf-container.light-mode h1 {
             background: linear-gradient(180deg, #1F2328 0%, #57606A 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+        /* =========================================
+           GLOBAL RESET & BASE
+           ========================================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-primary); color: var(--text-secondary);
-            line-height: 1.6; font-size: 16px; -webkit-font-smoothing: antialiased;
-            padding: 40px 20px; display: flex; flex-direction: column;
-            align-items: center; gap: 32px; transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        #resume-wrapper { display: flex; flex-direction: column; align-items: center; gap: 32px; width: 100%; }
+
+        #resume-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            width: 100%;
+        }
+
         .page {
-            width: 100%; max-width: 850px; background-color: var(--bg-primary);
-            padding: 40px; position: relative; display: flex; flex-direction: column;
-            border: 1px solid var(--border-primary); border-radius: var(--radius-md);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: background-color 0.3s ease, border-color 0.3s ease;
+            width: 100%;
+            max-width: 850px;
+            background-color: var(--bg-primary);
+            padding: 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        .pdf-container { position: absolute; left: -99999px; top: 0; width: 210mm; background-color: var(--bg-primary); z-index: -1; opacity: 0; pointer-events: none; }
-        h1, h2, h3, h4 { color: var(--text-primary); font-weight: 600; letter-spacing: -0.02em; }
+
+        /* FIX 1: Removed opacity: 0 and negative left position so canvas can render it */
+        .pdf-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 210mm;
+            background-color: var(--bg-primary);
+            z-index: -9999; /* This hides it securely behind your main page without making it invisible */
+        }
+
+        /* =========================================
+           TYPOGRAPHY
+           ========================================= */
+        h1, h2, h3, h4 {
+            color: var(--text-primary);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
         h1 {
-            font-size: clamp(28px, 6vw, 42px); font-weight: 700; line-height: 1.1; margin-bottom: var(--space-2);
+            font-size: clamp(28px, 6vw, 42px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--space-2);
             background: linear-gradient(180deg, #FFFFFF 0%, #9DA5B4 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+
         h2 {
-            font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary);
-            font-family: 'JetBrains Mono', monospace; margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-2);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
         }
-        h2::before { content: ''; width: 12px; height: 1px; background-color: var(--accent-blue); }
-        h3 { font-size: 18px; margin-bottom: var(--space-1); }
-        p { font-size: 15px; color: var(--text-secondary); }
-        a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s ease; }
-        a:hover { color: var(--accent-blue); }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+
+        h2::before {
+            content: '';
+            width: 12px;
+            height: 1px;
+            background-color: var(--accent-blue);
+        }
+
+        h3 {
+            font-size: 18px;
+            margin-bottom: var(--space-1);
+        }
+
+        p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-blue);
+        }
+
+        /* =========================================
+           LAYOUT COMPONENTS
+           ========================================= */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-5);
+        }
+
         .margin-top { margin-top: var(--space-5); }
-        .hero { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: var(--space-5); border-bottom: 1px solid var(--border-primary); margin-bottom: var(--space-5); gap: var(--space-4); }
-        .hero-titles { flex: 1; min-width: 0; }
-        .hero-role { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent-blue); margin-bottom: var(--space-3); display: block; }
-        .hero-summary { max-width: 100%; margin-top: var(--space-3); font-size: 15px; line-height: 1.7; }
-        .hero-contact { display: flex; flex-direction: column; gap: var(--space-2); text-align: right; min-width: 220px; padding-left: var(--space-4); border-left: 1px solid var(--border-primary); }
-        .contact-item { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-2); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
-        .contact-item svg { width: 14px; height: 14px; stroke: var(--text-tertiary); flex-shrink: 0; }
-        .qr-download-wrapper { margin-top: var(--space-4); display: flex; flex-direction: column; align-items: flex-end; gap: 12px; width: 100%; }
-        .qr-code { padding: 8px; background: #fff; border-radius: var(--radius-sm); }
-        .qr-code img { width: 80px; height: 80px; display: block; }
-        .download-card { background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-sm); padding: 12px; display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 160px; }
-        .dl-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; text-align: center; letter-spacing: 0.05em; }
-        .radio-group { display: flex; justify-content: space-around; gap: 8px; }
-        .radio-label { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-secondary); transition: color 0.2s ease; }
+
+        /* =========================================
+           HERO SECTION
+           ========================================= */
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: var(--space-5);
+            border-bottom: 1px solid var(--border-primary);
+            margin-bottom: var(--space-5);
+            gap: var(--space-4);
+        }
+
+        .hero-titles {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .hero-role {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent-blue);
+            margin-bottom: var(--space-3);
+            display: block;
+        }
+
+        .hero-summary {
+            max-width: 100%;
+            margin-top: var(--space-3);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .hero-contact {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            text-align: right;
+            min-width: 220px;
+            padding-left: var(--space-4);
+            border-left: 1px solid var(--border-primary);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: var(--space-2);
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .contact-item svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--text-tertiary);
+            flex-shrink: 0;
+        }
+
+        /* =========================================
+           QR & DOWNLOAD CARD COMPONENT
+           ========================================= */
+        .qr-download-wrapper {
+            margin-top: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .qr-code {
+            padding: 8px;
+            background: #fff;
+            border-radius: var(--radius-sm);
+        }
+        
+        .qr-code img {
+            width: 80px;
+            height: 80px;
+            display: block;
+        }
+
+        .download-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 160px;
+        }
+
+        .dl-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+
         .radio-label:hover { color: var(--text-primary); }
-        .radio-label input { accent-color: var(--accent-blue); cursor: pointer; }
-        .dl-btn { background-color: var(--accent-blue); color: #FFFFFF; border: none; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background-color 0.2s ease; }
+
+        .radio-label input {
+            accent-color: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .dl-btn {
+            background-color: var(--accent-blue);
+            color: #FFFFFF;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background-color 0.2s ease;
+        }
+
         .dl-btn:hover { background-color: #2563EB; }
         .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .dl-btn svg { width: 14px; height: 14px; }
+
+
+        /* =========================================
+           SKILLS BADGES
+           ========================================= */
         .skill-category { margin-bottom: var(--space-4); }
         .skill-label { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: var(--space-2); display: block; }
         .badges { display: flex; flex-wrap: wrap; gap: 8px; }
         .badge { padding: 6px 12px; background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 20px; font-size: 13px; color: var(--text-secondary); font-weight: 500; transition: all 0.2s ease; display: inline-block; }
         .badge:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+        /* =========================================
+           EXPERIENCE TIMELINE
+           ========================================= */
         .timeline { position: relative; padding-left: var(--space-4); }
         .timeline::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 1px; background-color: var(--border-primary); }
         .timeline-item { position: relative; padding-bottom: var(--space-5); }
@@ -98,6 +368,10 @@
         .exp-list { list-style: none; padding-left: var(--space-2); }
         .exp-list li { position: relative; padding-left: var(--space-3); margin-bottom: var(--space-2); font-size: 14.5px; line-height: 1.6; }
         .exp-list li::before { content: '▹'; position: absolute; left: 0; color: var(--accent-blue); font-size: 12px; top: 3px; }
+
+        /* =========================================
+           PROJECT CARDS
+           ========================================= */
         .project-card { background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: var(--space-4); transition: border-color 0.3s ease; height: 100%; }
         .project-card:hover { border-color: var(--border-accent); }
         .project-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); gap: 12px; }
@@ -108,17 +382,29 @@
         .tech-stack { display: flex; flex-wrap: wrap; gap: 6px; }
         .tech-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 8px; background-color: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-radius: 4px; }
         body.light-mode .tech-item, .pdf-container.light-mode .tech-item { background-color: rgba(9, 105, 218, 0.1); }
+
+        /* =========================================
+           PAGE 2 ELEMENTS
+           ========================================= */
         .info-block { background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: var(--space-4); height: 100%; }
         .info-block h3 { font-size: 15px; color: var(--text-primary); margin-bottom: var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-primary); }
         .cert-item, .edu-item, .highlight-item { margin-bottom: var(--space-3); }
         .cert-item:last-child, .edu-item:last-child, .highlight-item:last-child { margin-bottom: 0; }
         .item-title { font-size: 14px; font-weight: 600; color: var(--text-primary); display: block; }
         .item-sub { font-size: 12px; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace; }
+
+        /* =========================================
+           PDF GENERATION STRICT LAYOUT
+           ========================================= */
         .pdf-container .page { border: none; box-shadow: none; border-radius: 0; width: 210mm; min-height: 297mm; max-width: 210mm; padding: 15mm; page-break-after: always; }
         .pdf-container .grid-2 { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
         .pdf-container .hero { flex-direction: row !important; align-items: flex-start !important; }
         .pdf-container .hero-contact { text-align: right !important; padding-left: 32px !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; }
         .pdf-container .contact-item { justify-content: flex-end !important; }
+
+        /* =========================================
+           RESPONSIVE STYLES
+           ========================================= */
         @media screen and (max-width: 768px) {
             body { padding: 15px; }
             .page { padding: 25px; border-radius: var(--radius-md); }
@@ -154,168 +440,5 @@
                     <div class="contact-item"><span>India</span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
                     
                     <div class="qr-download-wrapper">
-                        <div class="qr-code"><img id="qr-img" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=mailto:v.vaibhavtiwari@gmail.com&color=08090A&bgcolor=FFFFFF" alt="Contact QR"></div>
-                        <div class="download-card">
-                            <span class="dl-label">Download Resume</span>
-                            <div class="radio-group">
-                                <label class="radio-label"><input type="radio" name="pdf-theme" value="dark" checked> Dark</label>
-                                <label class="radio-label"><input type="radio" name="pdf-theme" value="light"> Light</label>
-                            </div>
-                            <button class="dl-btn" onclick="generatePDF()" id="btn-download">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                <span id="btn-text">PDF</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <section>
-                <h2>Technical Stack & Capabilities</h2>
-                <div class="grid-2">
-                    <div class="skill-category"><span class="skill-label">Development & Backend</span><div class="badges"><span class="badge">Laravel</span><span class="badge">PHP</span><span class="badge">JavaScript</span><span class="badge">MySQL</span><span class="badge">HTML/CSS</span><span class="badge">REST APIs</span></div></div>
-                    <div class="skill-category"><span class="skill-label">AI & Automation</span><div class="badges"><span class="badge">n8n</span><span class="badge">AI Integration</span><span class="badge">Prompt Engineering</span><span class="badge">Webhooks</span><span class="badge">Telegram Bot Automation</span></div></div>
-                    <div class="skill-category"><span class="skill-label">Infrastructure & Networking</span><div class="badges"><span class="badge">Windows Server</span><span class="badge">Active Directory</span><span class="badge">DNS/DHCP</span><span class="badge">Cisco Networking</span><span class="badge">LAN/WAN</span></div></div>
-                    <div class="skill-category"><span class="skill-label">Tools & Platforms</span><div class="badges"><span class="badge">Docker</span><span class="badge">Git</span><span class="badge">Linux</span><span class="badge">WordPress</span><span class="badge">Magento</span></div></div>
-                </div>
-            </section>
-
-            <section class="margin-top">
-                <h2>Professional Experience</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="exp-header">
-                            <div><span class="exp-role">Senior Executive / Software & Infrastructure Engineer</span><span class="exp-company"> — Cloud Up Codex LLP</span></div>
-                            <span class="exp-date">MAR 2018 — MAR 2023</span>
-                        </div>
-                        <ul class="exp-list">
-                            <li>Developed and maintained robust business applications and internal automation solutions, directly improving organizational productivity.</li>
-                            <li>Architected advanced n8n automation pipelines, seamlessly integrating diverse APIs, databases, Telegram bots, and webhooks to orchestrate complex business processes.</li>
-                            <li>Designed and implemented AI-assisted workflows to automate repetitive operations, significantly reducing manual overhead and modernizing legacy systems.</li>
-                            <li>Engineered secure REST API integrations connecting disparate services and enabling real-time data flow across business platforms.</li>
-                            <li>Administered core IT infrastructure including Windows Server, Active Directory, DNS, DHCP, LAN/WAN, and Cisco networking environments.</li>
-                            <li>Provided critical infrastructure troubleshooting, incident management, and client support, ensuring high availability and rapid resolution of technical issues.</li>
-                            <li>Collaborated directly with stakeholders to translate business requirements into technical deliverables, consistently meeting project timelines.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <section class="margin-top">
-                <h2>Core Implementations & Systems</h2>
-                <div class="grid-2">
-                    <div class="project-card">
-                        <div class="project-header"><div class="project-title"><svg class="project-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>AI-Assisted Workflow Automation</div><span class="project-link">System Architecture</span></div>
-                        <p class="project-desc">Designed enterprise-grade automation systems leveraging AI and n8n to eliminate repetitive manual operations. Integrated webhook listeners and API routing to enable autonomous business process execution.</p>
-                        <div class="tech-stack"><span class="tech-item">n8n</span><span class="tech-item">AI Integration</span><span class="tech-item">Webhooks</span><span class="tech-item">Automation</span></div>
-                    </div>
-                    <div class="project-card">
-                        <div class="project-header"><div class="project-title"><svg class="project-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>API & Telegram Bot Orchestration</div><span class="project-link">Backend / Bots</span></div>
-                        <p class="project-desc">Built scalable backend pipelines connecting REST APIs with Telegram Bot automation. Enabled real-time database updates and external service triggering directly from user interactions.</p>
-                        <div class="tech-stack"><span class="tech-item">Telegram API</span><span class="tech-item">REST APIs</span><span class="tech-item">MySQL</span><span class="tech-item">Laravel</span></div>
-                    </div>
-                    <div class="project-card">
-                        <div class="project-header"><div class="project-title"><svg class="project-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>Enterprise Network Infrastructure</div><span class="project-link">Systems Admin</span></div>
-                        <p class="project-desc">Managed and hardened enterprise IT infrastructure. Configured Active Directory, DNS/DHCP, and Cisco networking devices to maintain high-availability LAN/WAN environments.</p>
-                        <div class="tech-stack"><span class="tech-item">Windows Server</span><span class="tech-item">Cisco</span><span class="tech-item">Active Directory</span></div>
-                    </div>
-                    <div class="project-card">
-                        <div class="project-header"><div class="project-title"><svg class="project-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>Business Application Stack</div><span class="project-link">Full Stack</span></div>
-                        <p class="project-desc">Maintained and enhanced business applications using Laravel and WordPress/Magento. Implemented custom modules and ensured seamless database interactions.</p>
-                        <div class="tech-stack"><span class="tech-item">Laravel/PHP</span><span class="tech-item">WordPress</span><span class="tech-item">Magento</span></div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="page">
-            <header class="hero" style="padding-bottom: 20px; margin-bottom: 20px;">
-                <div class="hero-titles"><span class="hero-role">Continued — V. Vaibhav Tiwari</span><h1 style="font-size: 28px;">Education & Technical Credentials</h1></div>
-            </header>
-
-            <div class="grid-2">
-                <div>
-                    <section><h2>Education</h2><div class="info-block">
-                        <div class="edu-item"><span class="item-title">B.Sc. Information Technology</span><span class="item-sub">Kuvempu University • 2015</span><p style="font-size: 13px; margin-top: 4px; color: var(--text-secondary);">Comprehensive foundation in software engineering, systems architecture, and information technology management.</p></div>
-                        <div class="edu-item" style="margin-top: 16px;"><span class="item-title">GNIIT Software Engineering</span><span class="item-sub">NIIT • 2014</span><p style="font-size: 13px; margin-top: 4px; color: var(--text-secondary);">Specialized program in software development life cycles, programming logic, and enterprise application design.</p></div>
-                    </div></section>
-                    <section class="margin-top"><h2>Professional Certifications</h2><div class="info-block">
-                        <div class="cert-item"><span class="item-title">CompTIA Hardware & Network+</span><span class="item-sub">CompTIA</span></div>
-                        <div class="cert-item" style="margin-top: 12px;"><span class="item-title">NIIT Office Applications</span><span class="item-sub">NIIT</span></div>
-                    </div></section>
-                </div>
-                <div>
-                    <section><h2>Key Strengths</h2><div class="info-block"><div class="badges" style="gap: 8px;">
-                        <span class="badge">AI Workflow Automation</span><span class="badge">n8n Automation Expert</span><span class="badge">Backend Development</span><span class="badge">API Integration</span><span class="badge">Business Process Automation</span><span class="badge">System Administration</span><span class="badge">Infrastructure Management</span><span class="badge">Analytical Problem Solving</span>
-                    </div></div></section>
-                    <section class="margin-top"><h2>Technical Highlights</h2><div class="info-block">
-                        <div class="highlight-item"><span class="item-title">Workflow Orchestration</span><p style="font-size: 13px; margin-top: 2px; color: var(--text-secondary);">Engineered complex n8n pipelines integrating AI, databases, and Telegram bots to automate end-to-end business processes, drastically reducing manual operational hours.</p></div>
-                        <div class="highlight-item" style="margin-top: 16px;"><span class="item-title">Digital Transformation</span><p style="font-size: 13px; margin-top: 2px; color: var(--text-secondary);">Spearheaded the transition from manual workflows to AI-assisted automated solutions, directly impacting organizational productivity and operational efficiency.</p></div>
-                        <div class="highlight-item" style="margin-top: 16px;"><span class="item-title">Infrastructure Reliability</span><p style="font-size: 13px; margin-top: 2px; color: var(--text-secondary);">Maintained high-availability enterprise networks through expert administration of Windows Server, Active Directory, DNS, DHCP, and Cisco hardware.</p></div>
-                    </div></section>
-                </div>
-            </div>
-            <footer style="margin-top: auto; padding-top: 40px; border-top: 1px solid var(--border-primary); display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-tertiary);">V. VAAIBHAV TIWARI // RESUME 2024</span>
-                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-tertiary);">PAGE 02 / 02</span>
-            </footer>
-        </div>
-    </div>
-    <script>
-        window.onload = () => {
-            const qrImg = document.getElementById('qr-img');
-            if (qrImg) {
-                fetch(qrImg.src).then(res => res.blob()).then(blob => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => { qrImg.src = reader.result; };
-                    reader.readAsDataURL(blob);
-                }).catch(e => console.warn("QR CORS fetch failed, relying on html2canvas CORS"));
-            }
-        };
-
-        function generatePDF() {
-            const selectedTheme = document.querySelector('input[name="pdf-theme"]:checked').value;
-            const btn = document.getElementById('btn-download');
-            const btnText = document.getElementById('btn-text');
-            
-            btn.disabled = true;
-            btnText.innerText = "Processing...";
-
-            const container = document.createElement('div');
-            container.className = 'pdf-container';
-            if (selectedTheme === 'light') container.classList.add('light-mode');
-            
-            const clone = document.getElementById('resume-wrapper').cloneNode(true);
-            const downloadCardInClone = clone.querySelector('.download-card');
-            if (downloadCardInClone) downloadCardInClone.remove();
-            
-            container.appendChild(clone);
-            document.body.appendChild(container);
-
-            setTimeout(() => {
-                const opt = {
-                    margin: 0,
-                    filename: `Vaibhav_Tiwari_Resume_${selectedTheme}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: selectedTheme === 'light' ? '#FFFFFF' : '#08090A' },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'] }
-                };
-
-                html2pdf().set(opt).from(container).save().then(() => {
-                    document.body.removeChild(container);
-                    btn.disabled = false;
-                    btnText.innerText = "PDF";
-                }).catch((err) => {
-                    console.error("PDF Generation Error:", err);
-                    alert("An error occurred while generating the PDF. Please ensure you opened this file directly in a browser (not inside an AI workspace preview).");
-                    document.body.removeChild(container);
-                    btn.disabled = false;
-                    btnText.innerText = "PDF";
-                });
-            }, 300);
-        }
-    </script>
-</body>
-</html>
-            
+                        <div class="qr-code">
+                            <img id="qr-img" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=08090A&bgcolor=FFFFFF&data=BEGIN%3AVCARD%0AVERSION%3A3.0%0AN%3ATiwari%3BV.%20Vaibhav%3B%3B%3B%0AFN%3AV.%20Vaibhav%20Tiwari%0AORG%3ACloud%20Up%20Codex%20LLP%0ATITLE%3ASenior%20Software%20%26%20AI%20Automation%20Engineer%0ATEL%3BTYPE%3DWORK%2CVOICE%3A%2B919208495432%0ATEL%3BTYPE%3DCELL%2CVOICE%3A%2B919451807892%0AEMAIL%3Av
