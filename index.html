@@ -22,16 +22,16 @@
         }
 
         /* =========================================
-           LIGHT MODE OVERRIDES (Body + Print Container)
+           LIGHT MODE OVERRIDES
            ========================================= */
-        body.light-mode, #print-container.light-mode {
+        body.light-mode {
             --bg-primary: #FFFFFF; --bg-secondary: #F6F8FA; --bg-tertiary: #EBEDF0;
             --border-primary: #D0D7DE; --border-accent: #B0BAC5;
             --text-primary: #1F2328; --text-secondary: #57606A; --text-tertiary: #8C959F;
             --accent-blue: #0969DA; --accent-glow: rgba(9, 105, 218, 0.15);
         }
 
-        body.light-mode h1, #print-container.light-mode h1 {
+        body.light-mode h1 {
             background: linear-gradient(180deg, #1F2328 0%, #57606A 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
@@ -50,10 +50,10 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        #resume-wrapper { display: flex; flex-direction: column; align-items: center; gap: 32px; width: 100%; }
+        #resume-wrapper { display: flex; flex-direction: column; align-items: center; gap: 32px; width: 100%; max-width: 800px; }
 
         .page {
-            width: 100%; max-width: 800px; background-color: var(--bg-primary);
+            width: 100%; background-color: var(--bg-primary);
             padding: 40px; position: relative; display: flex; flex-direction: column;
             border: 1px solid var(--border-primary); border-radius: var(--radius-md);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -86,6 +86,7 @@
         .radio-group { display: flex; justify-content: space-around; gap: 8px; }
         .radio-label { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-secondary); }
         .radio-label input { accent-color: var(--accent-blue); cursor: pointer; }
+        
         .dl-btn { background-color: var(--accent-blue); color: #FFFFFF; border: none; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .dl-btn svg { width: 14px; height: 14px; }
 
@@ -130,9 +131,7 @@
         .web-theme-switcher button { background: transparent; color: var(--text-secondary); border: none; padding: 6px 14px; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; outline: none; }
         .web-theme-switcher button.active { background-color: var(--accent-blue); color: #FFFFFF; font-weight: 600; }
 
-        /* =========================================
-           MOBILE LIVE VIEW (Screen Ke Liye)
-           ========================================= */
+        /* MOBILE LIVE VIEW STYLES */
         @media screen and (max-width: 768px) {
             body { padding: 15px; }
             .page { padding: 25px; border-radius: var(--radius-md); }
@@ -143,53 +142,6 @@
             .grid-2 { grid-template-columns: 1fr; gap: var(--space-4); }
             h1 { font-size: 32px; }
             .footer-wrapper { flex-direction: column; text-align: center; justify-content: center; }
-        }
-
-        /* =========================================
-           FLASH-CLONE PDF CONTAINER (STRICT A4 LOCK)
-           Ye element download ke time DOM me aayega, uske dimensions fix honge,
-           Cropping 100% impossible ho jayegi aur 3rd page cut jayega.
-           ========================================= */
-        #print-container {
-            position: absolute;
-            top: 0; left: 0;
-            width: 800px !important;
-            z-index: 999999 !important; /* Screen par sabse upar dikhega */
-            background-color: var(--bg-primary) !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        #print-container .page {
-            width: 800px !important;
-            max-width: 800px !important;
-            height: 1130px !important; /* STRICT A4 HEIGHT (1:1.414 ratio at 800px width) */
-            min-height: 1130px !important;
-            max-height: 1130px !important;
-            overflow: hidden !important; /* Prevents text from pushing into a 3rd extra page */
-            margin: 0 !important;
-            padding: 40px !important;
-            border: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            background-color: var(--bg-primary) !important; /* Eliminates white spaces */
-            page-break-after: always !important;
-        }
-        #print-container .page:last-child {
-            page-break-after: auto !important; /* No extra blank page at the very end */
-        }
-
-        /* Enforce exact desktop layout over any mobile media queries */
-        #print-container .hero { flex-direction: row !important; gap: var(--space-4) !important; }
-        #print-container .hero-contact { text-align: right !important; padding-left: var(--space-4) !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; width: auto !important; }
-        #print-container .contact-item { justify-content: flex-end !important; }
-        #print-container .qr-download-wrapper { flex-direction: column !important; align-items: flex-end !important; justify-content: flex-start !important; gap: 12px !important; }
-        #print-container .grid-2 { grid-template-columns: 1fr 1fr !important; gap: var(--space-5) !important; }
-        #print-container h1 { font-size: 42px !important; }
-        
-        #print-container .download-card, 
-        #print-container .web-theme-switcher { 
-            display: none !important; 
         }
     </style>
 </head>
@@ -351,6 +303,8 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             setWebTheme(localStorage.getItem('website-theme') || 'auto');
+            
+            // Pre-fetch QR to Base64 so html2canvas never stalls on CORS
             const qrImg = document.getElementById('qr-img');
             if (qrImg) {
                 fetch(qrImg.src).then(res => res.blob()).then(blob => {
@@ -362,8 +316,7 @@
         });
 
         // ==========================================
-        // 100% BULLETPROOF FLASH-CLONE CAPTURE
-        // Ye logic mobile block/cropping ko fix karta hai kyunki ye actual me screen par physical object banata hai!
+        // 100% BULLETPROOF FIX: EXACT PIXEL MAPPING
         // ==========================================
         function generatePDF() {
             const selectedPdfTheme = document.querySelector('input[name="pdf-theme"]:checked').value;
@@ -373,50 +326,90 @@
             btn.disabled = true;
             btnText.innerText = "Processing...";
 
-            // 1. Ek temporary actual box banao jo DOM me physically dikhega
-            const printContainer = document.createElement('div');
-            printContainer.id = 'print-container';
-            if (selectedPdfTheme === 'light') printContainer.classList.add('light-mode');
+            const element = document.getElementById('resume-wrapper');
 
-            // 2. Resume ko copy karke isme daalo
-            const wrapper = document.getElementById('resume-wrapper');
-            const clone = wrapper.cloneNode(true);
-            
-            printContainer.appendChild(clone);
-            document.body.appendChild(printContainer);
+            const opt = {
+                margin: 0,
+                filename: `Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    windowWidth: 800, // Forces desktop width
+                    backgroundColor: selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A',
+                    onclone: function(clonedDoc) {
+                        const clonedWrapper = clonedDoc.getElementById('resume-wrapper');
+                        
+                        // 1. Force the correct Theme
+                        if (selectedPdfTheme === 'light') {
+                            clonedDoc.body.classList.add('light-mode');
+                            clonedDoc.body.style.backgroundColor = '#FFFFFF';
+                        } else {
+                            clonedDoc.body.classList.remove('light-mode');
+                            clonedDoc.body.style.backgroundColor = '#08090A';
+                        }
 
-            // Screen ko upar le jao
-            window.scrollTo(0, 0);
+                        // 2. Hide Buttons
+                        const dlCard = clonedDoc.querySelector('.download-card');
+                        if (dlCard) dlCard.style.display = 'none';
+                        const themeSwitcher = clonedDoc.querySelector('.web-theme-switcher');
+                        if (themeSwitcher) themeSwitcher.style.display = 'none';
 
-            // 3. Browser ko isko screen par draw karne ke liye thoda time do (0.5 sec)
-            setTimeout(() => {
-                const opt = {
-                    margin: 0,
-                    filename: `Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`,
-                    image: { type: 'jpeg', quality: 1.0 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true, 
-                        backgroundColor: selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A',
-                        windowWidth: 800, // Explicit size
-                        width: 800
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
+                        // 3. Force exact Desktop Layout explicitly (Overrides mobile CSS)
+                        clonedWrapper.style.width = '800px';
+                        clonedWrapper.style.maxWidth = '800px';
+                        clonedWrapper.style.margin = '0';
+                        clonedWrapper.style.padding = '0';
+                        clonedWrapper.style.gap = '0'; // Removes gap between pages to stop 3rd page cut
+                        
+                        const hero = clonedDoc.querySelector('.hero');
+                        if(hero) { hero.style.flexDirection = 'row'; hero.style.gap = '24px'; }
+                        
+                        const heroContact = clonedDoc.querySelector('.hero-contact');
+                        if(heroContact) { 
+                            heroContact.style.textAlign = 'right'; 
+                            heroContact.style.paddingLeft = '24px'; 
+                            heroContact.style.paddingTop = '0'; 
+                            heroContact.style.borderLeft = '1px solid var(--border-primary)'; 
+                            heroContact.style.borderTop = 'none'; 
+                            heroContact.style.width = 'auto';
+                        }
 
-                html2pdf().set(opt).from(printContainer).save().then(() => {
-                    // PDF banne ke baad us box ko permanently hata do
-                    document.body.removeChild(printContainer);
-                    btn.disabled = false;
-                    btnText.innerText = "PDF";
-                }).catch((err) => {
-                    console.error("PDF Error:", err);
-                    alert("PDF banne me error aaya.");
-                    document.body.removeChild(printContainer);
-                    btn.disabled = false;
-                    btnText.innerText = "PDF";
-                });
-            }, 500); 
+                        const grids = clonedDoc.querySelectorAll('.grid-2');
+                        grids.forEach(g => { g.style.display = 'grid'; g.style.gridTemplateColumns = '1fr 1fr'; g.style.gap = '32px'; });
+
+                        const qrWrap = clonedDoc.querySelector('.qr-download-wrapper');
+                        if(qrWrap) { qrWrap.style.flexDirection = 'column'; qrWrap.style.alignItems = 'flex-end'; }
+
+                        // 4. Force Perfect A4 Size on Pages
+                        const pages = clonedDoc.querySelectorAll('.page');
+                        pages.forEach(page => {
+                            page.style.width = '800px';
+                            // 1131px is the exact mathematical height for an A4 page at 800px width
+                            page.style.minHeight = '1131px'; 
+                            page.style.maxHeight = '1131px';
+                            page.style.margin = '0';
+                            page.style.border = 'none';
+                            page.style.borderRadius = '0';
+                            page.style.boxShadow = 'none';
+                            page.style.backgroundColor = selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A';
+                        });
+                    }
+                },
+                // YAHI MAIN TRICK HAI: PDF format 'mm' ki jagah 'px' use karna
+                // Isse conversion errors khatam hote hain aur cropping theek ho jati hai!
+                jsPDF: { unit: 'px', format: [800, 1131], orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                btn.disabled = false;
+                btnText.innerText = "PDF";
+            }).catch((err) => {
+                console.error("PDF Error:", err);
+                alert("Error generating PDF.");
+                btn.disabled = false;
+                btnText.innerText = "PDF";
+            });
         }
     </script>
 </body>
