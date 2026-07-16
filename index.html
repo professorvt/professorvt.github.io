@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* =========================================
-           DESIGN SYSTEM & TOKENS (DARK MODE)
+           DESIGN SYSTEM & TOKENS
            ========================================= */
         :root {
             --bg-primary: #08090A; --bg-secondary: #0E1116; --bg-tertiary: #161B22;
@@ -21,9 +21,6 @@
             --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px; --space-5: 32px; --space-6: 48px;
         }
 
-        /* =========================================
-           LIGHT MODE OVERRIDES
-           ========================================= */
         body.light-mode, .pdf-container.light-mode {
             --bg-primary: #FFFFFF; --bg-secondary: #F6F8FA; --bg-tertiary: #EBEDF0;
             --border-primary: #D0D7DE; --border-accent: #B0BAC5;
@@ -36,9 +33,6 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
-        /* =========================================
-           GLOBAL RESET & BASE
-           ========================================= */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
         
@@ -46,21 +40,18 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-primary); color: var(--text-secondary);
             line-height: 1.6; font-size: 16px; -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale; padding: 40px 20px; display: flex;
-            flex-direction: column; align-items: center; gap: 32px;
+            padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 32px;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         #resume-wrapper { display: flex; flex-direction: column; align-items: center; gap: 32px; width: 100%; }
 
         .page {
-            width: 100%; max-width: 850px; background-color: var(--bg-primary);
+            width: 100%; max-width: 800px; background-color: var(--bg-primary);
             padding: 40px; position: relative; display: flex; flex-direction: column;
             border: 1px solid var(--border-primary); border-radius: var(--radius-md);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-
-        .pdf-container { position: absolute; top: 0; left: 0; width: 210mm; background-color: var(--bg-primary); z-index: -9999; }
 
         h1, h2, h3, h4 { color: var(--text-primary); font-weight: 600; letter-spacing: -0.02em; }
         h1 { font-size: clamp(28px, 6vw, 42px); font-weight: 700; line-height: 1.1; margin-bottom: var(--space-2); background: linear-gradient(180deg, #FFFFFF 0%, #9DA5B4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -137,18 +128,15 @@
 
         .footer-wrapper { margin-top: auto; padding-top: 30px; border-top: 1px solid var(--border-primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
         .footer-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-tertiary); }
+        
         .web-theme-switcher { display: flex; background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 20px; overflow: hidden; }
         .web-theme-switcher button { background: transparent; color: var(--text-secondary); border: none; padding: 6px 14px; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s ease; outline: none; }
         .web-theme-switcher button.active { background-color: var(--accent-blue); color: #FFFFFF; font-weight: 600; }
         .web-theme-switcher button:hover:not(.active) { color: var(--text-primary); background-color: rgba(59, 130, 246, 0.1); }
 
-        .pdf-container .page { border: none; box-shadow: none; border-radius: 0; width: 210mm; min-height: 297mm; max-width: 210mm; padding: 15mm; page-break-after: always; }
-        .pdf-container .grid-2 { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
-        .pdf-container .hero { flex-direction: row !important; align-items: flex-start !important; }
-        .pdf-container .hero-contact { text-align: right !important; padding-left: 32px !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; }
-        .pdf-container .contact-item { justify-content: flex-end !important; }
-        .pdf-container .web-theme-switcher { display: none !important; }
-
+        /* =========================================
+           RESPONSIVE STYLES (MOBILE)
+           ========================================= */
         @media screen and (max-width: 768px) {
             body { padding: 15px; }
             .page { padding: 25px; border-radius: var(--radius-md); }
@@ -160,14 +148,43 @@
             h1 { font-size: 32px; }
             .footer-wrapper { flex-direction: column; text-align: center; justify-content: center; }
         }
-        @media screen and (max-width: 480px) {
-            .exp-header { flex-direction: column; align-items: flex-start; }
-            .project-header { flex-direction: column; align-items: flex-start; }
+
+        /* =========================================
+           STRICT PDF A4 DESKTOP FORCING
+           Ye rule mobile rules ko poori tarah overwrite kar dega
+           ========================================= */
+        .pdf-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 800px !important;
+            background-color: var(--bg-primary);
+            z-index: -9999;
         }
+        
+        .pdf-container .page {
+            width: 800px !important;
+            max-width: 800px !important;
+            padding: 40px !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            page-break-after: always;
+        }
+
+        /* Mobile se Desktop revert karne ke rules */
+        .pdf-container .hero { flex-direction: row !important; gap: var(--space-4) !important; }
+        .pdf-container .hero-contact { text-align: right !important; padding-left: var(--space-4) !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; width: auto !important; }
+        .pdf-container .contact-item { justify-content: flex-end !important; }
+        .pdf-container .qr-download-wrapper { flex-direction: column !important; align-items: flex-end !important; justify-content: flex-start !important; gap: 12px !important; }
+        .pdf-container .grid-2 { grid-template-columns: 1fr 1fr !important; gap: var(--space-5) !important; }
+        .pdf-container h1 { font-size: 42px !important; }
+        .pdf-container .web-theme-switcher { display: none !important; }
     </style>
 </head>
 <body>
     <div id="resume-wrapper">
+        <!-- PAGE 1 -->
         <div class="page">
             <header class="hero">
                 <div class="hero-titles">
@@ -263,6 +280,7 @@
             </section>
         </div>
 
+        <!-- PAGE 2 -->
         <div class="page">
             <header class="hero" style="padding-bottom: 20px; margin-bottom: 20px;">
                 <div class="hero-titles"><span class="hero-role">Continued — V. Vaibhav Tiwari</span><h1 style="font-size: 28px;">Education & Technical Credentials</h1></div>
@@ -350,6 +368,9 @@
             }
         });
 
+        // ==========================================
+        // STRICT A4 DESKTOP PDF GENERATION LOGIC
+        // ==========================================
         function generatePDF() {
             const selectedPdfTheme = document.querySelector('input[name="pdf-theme"]:checked').value;
             const btn = document.getElementById('btn-download');
@@ -358,32 +379,39 @@
             btn.disabled = true;
             btnText.innerText = "Processing...";
 
+            // Naya hidden container banaya jiska CSS style bilkul desktop jaisa fix kar diya gaya hai
             const container = document.createElement('div');
             container.className = 'pdf-container';
             if (selectedPdfTheme === 'light') container.classList.add('light-mode');
             
             const clone = document.getElementById('resume-wrapper').cloneNode(true);
             
+            // PDF se faltu button hata do
             const downloadCardInClone = clone.querySelector('.download-card');
             if (downloadCardInClone) downloadCardInClone.remove();
+            
+            const themeSwitcher = clone.querySelector('.web-theme-switcher');
+            if (themeSwitcher) themeSwitcher.remove();
             
             container.appendChild(clone);
             document.body.appendChild(container);
 
+            // Engine ko poora time (500ms) diya taaki phone par memory crash/blank page na aaye
             setTimeout(() => {
                 const opt = {
                     margin: 0,
                     filename: `Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
+                    image: { type: 'jpeg', quality: 1.0 },
                     html2canvas: { 
                         scale: 2, 
                         useCORS: true, 
                         backgroundColor: selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A',
                         scrollY: 0,
-                        windowWidth: document.documentElement.offsetWidth
+                        scrollX: 0,
+                        width: 800,          // Engine ko zabardasti bola ki canvas strictly 800px hi draw karna hai
+                        windowWidth: 800     // Engine ko bevakoof banaya ki screen ki size 800px (Desktop) hai
                     },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'] }
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
                 html2pdf().set(opt).from(container).save().then(() => {
@@ -392,14 +420,13 @@
                     btnText.innerText = "PDF";
                 }).catch((err) => {
                     console.error("PDF Generation Error:", err);
-                    alert("An error occurred while generating the PDF.");
+                    alert("Error generating PDF.");
                     document.body.removeChild(container);
                     btn.disabled = false;
                     btnText.innerText = "PDF";
                 });
-            }, 300);
+            }, 500);
         }
     </script>
 </body>
-    </html>
-    
+</html>
