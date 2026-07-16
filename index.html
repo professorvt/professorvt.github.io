@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* =========================================
-           DESIGN SYSTEM & TOKENS
+           DESIGN SYSTEM & TOKENS (DARK MODE DEFAULT)
            ========================================= */
         :root {
             --bg-primary: #08090A; --bg-secondary: #0E1116; --bg-tertiary: #161B22;
@@ -21,18 +21,24 @@
             --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px; --space-5: 32px; --space-6: 48px;
         }
 
-        body.light-mode, .pdf-container.light-mode {
+        /* =========================================
+           LIGHT MODE OVERRIDES
+           ========================================= */
+        body.light-mode {
             --bg-primary: #FFFFFF; --bg-secondary: #F6F8FA; --bg-tertiary: #EBEDF0;
             --border-primary: #D0D7DE; --border-accent: #B0BAC5;
             --text-primary: #1F2328; --text-secondary: #57606A; --text-tertiary: #8C959F;
             --accent-blue: #0969DA; --accent-glow: rgba(9, 105, 218, 0.15);
         }
 
-        body.light-mode h1, .pdf-container.light-mode h1 {
+        body.light-mode h1 {
             background: linear-gradient(180deg, #1F2328 0%, #57606A 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
+        /* =========================================
+           GLOBAL RESET & BASE
+           ========================================= */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
         
@@ -65,6 +71,9 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
         .margin-top { margin-top: var(--space-5); }
 
+        /* =========================================
+           HERO & COMPONENTS
+           ========================================= */
         .hero { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: var(--space-5); border-bottom: 1px solid var(--border-primary); margin-bottom: var(--space-5); gap: var(--space-4); }
         .hero-titles { flex: 1; min-width: 0; }
         .hero-role { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent-blue); margin-bottom: var(--space-3); display: block; }
@@ -89,6 +98,9 @@
         .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .dl-btn svg { width: 14px; height: 14px; }
 
+        /* =========================================
+           SKILLS & TIMELINE
+           ========================================= */
         .skill-category { margin-bottom: var(--space-4); }
         .skill-label { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: var(--space-2); display: block; }
         .badges { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -117,8 +129,7 @@
         .project-desc { font-size: 13.5px; margin-bottom: var(--space-3); color: var(--text-secondary); }
         .tech-stack { display: flex; flex-wrap: wrap; gap: 6px; }
         .tech-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 8px; background-color: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-radius: 4px; }
-        body.light-mode .tech-item, .pdf-container.light-mode .tech-item { background-color: rgba(9, 105, 218, 0.1); }
-
+        
         .info-block { background-color: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: var(--space-4); height: 100%; }
         .info-block h3 { font-size: 15px; color: var(--text-primary); margin-bottom: var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-primary); }
         .cert-item, .edu-item, .highlight-item { margin-bottom: var(--space-3); }
@@ -135,56 +146,73 @@
         .web-theme-switcher button:hover:not(.active) { color: var(--text-primary); background-color: rgba(59, 130, 246, 0.1); }
 
         /* =========================================
-           RESPONSIVE STYLES (MOBILE)
+           RESPONSIVE STYLES (MOBILE LIVE VIEW)
            ========================================= */
         @media screen and (max-width: 768px) {
-            body { padding: 15px; }
-            .page { padding: 25px; border-radius: var(--radius-md); }
-            .hero { flex-direction: column; gap: var(--space-4); }
-            .hero-contact { text-align: left; padding-left: 0; padding-top: var(--space-4); border-left: none; border-top: 1px solid var(--border-primary); width: 100%; }
-            .contact-item { justify-content: flex-start; }
-            .qr-download-wrapper { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 16px; }
-            .grid-2 { grid-template-columns: 1fr; gap: var(--space-4); }
-            h1 { font-size: 32px; }
-            .footer-wrapper { flex-direction: column; text-align: center; justify-content: center; }
+            body:not(.is-printing) { padding: 15px; }
+            body:not(.is-printing) .page { padding: 25px; border-radius: var(--radius-md); }
+            body:not(.is-printing) .hero { flex-direction: column; gap: var(--space-4); }
+            body:not(.is-printing) .hero-contact { text-align: left; padding-left: 0; padding-top: var(--space-4); border-left: none; border-top: 1px solid var(--border-primary); width: 100%; }
+            body:not(.is-printing) .contact-item { justify-content: flex-start; }
+            body:not(.is-printing) .qr-download-wrapper { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 16px; }
+            body:not(.is-printing) .grid-2 { grid-template-columns: 1fr; gap: var(--space-4); }
+            body:not(.is-printing) h1 { font-size: 32px; }
+            body:not(.is-printing) .footer-wrapper { flex-direction: column; text-align: center; justify-content: center; }
         }
 
         /* =========================================
-           STRICT PDF A4 DESKTOP FORCING
-           Ye rule mobile rules ko poori tarah overwrite kar dega
+           100% BULLETPROOF FIX: REAL DOM DESKTOP PRINTING
+           Ye rules mobile ki screen ko force karke temporarily desktop me badal denge
            ========================================= */
-        .pdf-container {
-            position: absolute;
-            top: 0; left: 0;
+        body.is-printing {
             width: 800px !important;
-            background-color: var(--bg-primary);
-            z-index: -9999;
+            min-width: 800px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: var(--bg-primary) !important;
         }
-        
-        .pdf-container .page {
+        body.is-printing #resume-wrapper {
+            width: 800px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        body.is-printing .page {
             width: 800px !important;
             max-width: 800px !important;
+            margin: 0 !important;
             padding: 40px !important;
             border: none !important;
             box-shadow: none !important;
             border-radius: 0 !important;
-            margin: 0 !important;
-            page-break-after: always;
+            /* YAHAN SE PAGES KATA HUA FIX HOGA */
+            page-break-after: always !important;
+            break-after: page !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+        /* Akhiri page ke baad extra blank safed panna na aaye */
+        body.is-printing .page:last-child {
+            page-break-after: auto !important;
+            break-after: auto !important;
         }
 
-        /* Mobile se Desktop revert karne ke rules */
-        .pdf-container .hero { flex-direction: row !important; gap: var(--space-4) !important; }
-        .pdf-container .hero-contact { text-align: right !important; padding-left: var(--space-4) !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; width: auto !important; }
-        .pdf-container .contact-item { justify-content: flex-end !important; }
-        .pdf-container .qr-download-wrapper { flex-direction: column !important; align-items: flex-end !important; justify-content: flex-start !important; gap: 12px !important; }
-        .pdf-container .grid-2 { grid-template-columns: 1fr 1fr !important; gap: var(--space-5) !important; }
-        .pdf-container h1 { font-size: 42px !important; }
-        .pdf-container .web-theme-switcher { display: none !important; }
+        /* Force exactly desktop layout on inner elements */
+        body.is-printing .hero { flex-direction: row !important; gap: var(--space-4) !important; }
+        body.is-printing .hero-contact { text-align: right !important; padding-left: var(--space-4) !important; padding-top: 0 !important; border-left: 1px solid var(--border-primary) !important; border-top: none !important; width: auto !important; }
+        body.is-printing .contact-item { justify-content: flex-end !important; }
+        body.is-printing .qr-download-wrapper { flex-direction: column !important; align-items: flex-end !important; justify-content: flex-start !important; gap: 12px !important; }
+        body.is-printing .grid-2 { grid-template-columns: 1fr 1fr !important; gap: var(--space-5) !important; }
+        body.is-printing h1 { font-size: 42px !important; }
+
+        /* PDF mein download card aur footer theme switcher hide kardo */
+        body.is-printing .download-card, 
+        body.is-printing .web-theme-switcher { 
+            display: none !important; 
+        }
     </style>
 </head>
 <body>
     <div id="resume-wrapper">
-        <!-- PAGE 1 -->
         <div class="page">
             <header class="hero">
                 <div class="hero-titles">
@@ -201,12 +229,10 @@
                     <div class="contact-item"><span>India</span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
                     
                     <div class="qr-download-wrapper">
-                        <!-- vCard QR Code -->
                         <div class="qr-code">
                             <img id="qr-img" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=08090A&bgcolor=FFFFFF&data=BEGIN%3AVCARD%0AVERSION%3A3.0%0AN%3ATiwari%3BV.%20Vaibhav%3B%3B%3B%0AFN%3AV.%20Vaibhav%20Tiwari%0AORG%3ACloud%20Up%20Codex%20LLP%0ATITLE%3ASenior%20Software%20%26%20AI%20Automation%20Engineer%0ATEL%3BTYPE%3DWORK%2CVOICE%3A%2B919208495432%0ATEL%3BTYPE%3DCELL%2CVOICE%3A%2B919451807892%0AEMAIL%3Av.vaibhavtiwari%40gmail.com%0AURL%3Ahttps%3A%2F%2Fprofessorvt.github.io%0AEND%3AVCARD" alt="Contact QR">
                         </div>
                         
-                        <!-- PDF Download Card -->
                         <div class="download-card">
                             <span class="dl-label">Download Resume</span>
                             <div class="radio-group">
@@ -280,7 +306,6 @@
             </section>
         </div>
 
-        <!-- PAGE 2 -->
         <div class="page">
             <header class="hero" style="padding-bottom: 20px; margin-bottom: 20px;">
                 <div class="hero-titles"><span class="hero-role">Continued — V. Vaibhav Tiwari</span><h1 style="font-size: 28px;">Education & Technical Credentials</h1></div>
@@ -324,6 +349,9 @@
     </div>
 
     <script>
+        // ==========================================
+        // WEBSITE THEME SWITCHER LOGIC
+        // ==========================================
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
         let currentWebTheme = 'auto';
 
@@ -331,33 +359,29 @@
             document.querySelectorAll('.web-theme-switcher button').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-theme-${theme}`).classList.add('active');
 
-            if (theme === 'light') {
-                document.body.classList.add('light-mode');
-            } else if (theme === 'dark') {
-                document.body.classList.remove('light-mode');
-            } else if (theme === 'auto') {
-                if (systemPrefersDark.matches) {
-                    document.body.classList.remove('light-mode');
-                } else {
-                    document.body.classList.add('light-mode');
-                }
+            if (theme === 'light') { 
+                document.body.classList.add('light-mode'); 
+            } else if (theme === 'dark') { 
+                document.body.classList.remove('light-mode'); 
+            } else if (theme === 'auto') { 
+                systemPrefersDark.matches ? document.body.classList.remove('light-mode') : document.body.classList.add('light-mode'); 
             }
         }
 
-        function setWebTheme(theme) {
-            currentWebTheme = theme;
-            localStorage.setItem('website-theme', theme);
-            applyWebTheme(theme);
+        function setWebTheme(theme) { 
+            currentWebTheme = theme; 
+            localStorage.setItem('website-theme', theme); 
+            applyWebTheme(theme); 
         }
 
-        systemPrefersDark.addEventListener('change', (e) => {
-            if (currentWebTheme === 'auto') applyWebTheme('auto');
+        systemPrefersDark.addEventListener('change', () => { 
+            if (currentWebTheme === 'auto') applyWebTheme('auto'); 
         });
 
         window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('website-theme') || 'auto';
-            setWebTheme(savedTheme);
-
+            setWebTheme(localStorage.getItem('website-theme') || 'auto');
+            
+            // Pre-fetch QR Code for strict CORS bypass
             const qrImg = document.getElementById('qr-img');
             if (qrImg) {
                 fetch(qrImg.src).then(res => res.blob()).then(blob => {
@@ -369,7 +393,8 @@
         });
 
         // ==========================================
-        // STRICT A4 DESKTOP PDF GENERATION LOGIC
+        // 100% BULLETPROOF REAL DOM CAPTURE
+        // Fixes Blank Mobile Page, Ignored Themes, and Chopped Paginations
         // ==========================================
         function generatePDF() {
             const selectedPdfTheme = document.querySelector('input[name="pdf-theme"]:checked').value;
@@ -379,25 +404,27 @@
             btn.disabled = true;
             btnText.innerText = "Processing...";
 
-            // Naya hidden container banaya jiska CSS style bilkul desktop jaisa fix kar diya gaya hai
-            const container = document.createElement('div');
-            container.className = 'pdf-container';
-            if (selectedPdfTheme === 'light') container.classList.add('light-mode');
-            
-            const clone = document.getElementById('resume-wrapper').cloneNode(true);
-            
-            // PDF se faltu button hata do
-            const downloadCardInClone = clone.querySelector('.download-card');
-            if (downloadCardInClone) downloadCardInClone.remove();
-            
-            const themeSwitcher = clone.querySelector('.web-theme-switcher');
-            if (themeSwitcher) themeSwitcher.remove();
-            
-            container.appendChild(clone);
-            document.body.appendChild(container);
+            // 1. Current Live Theme ko save kar lo taaki baad me wapas aa sake
+            const originalIsLight = document.body.classList.contains('light-mode');
+            const originalScroll = window.scrollY; // User ka scroll position save karo
 
-            // Engine ko poora time (500ms) diya taaki phone par memory crash/blank page na aaye
+            // 2. Exact PDF wali theme 'Real Body' par daalo
+            if (selectedPdfTheme === 'light') {
+                document.body.classList.add('light-mode');
+            } else {
+                document.body.classList.remove('light-mode');
+            }
+
+            // 3. 'is-printing' class add karo jo forcibly mobile ko 800px desktop me badal degi
+            document.body.classList.add('is-printing');
+            
+            // Screen ko ekdum upar scroll karo taaki PDF top se shuru ho
+            window.scrollTo(0, 0);
+
+            // 4. 200ms ka wait do taaki phone ki browser engine naye color aur size ko render kar le
             setTimeout(() => {
+                const element = document.getElementById('resume-wrapper');
+
                 const opt = {
                     margin: 0,
                     filename: `Vaibhav_Tiwari_Resume_${selectedPdfTheme.charAt(0).toUpperCase() + selectedPdfTheme.slice(1)}.pdf`,
@@ -406,26 +433,41 @@
                         scale: 2, 
                         useCORS: true, 
                         backgroundColor: selectedPdfTheme === 'light' ? '#FFFFFF' : '#08090A',
-                        scrollY: 0,
-                        scrollX: 0,
-                        width: 800,          // Engine ko zabardasti bola ki canvas strictly 800px hi draw karna hai
-                        windowWidth: 800     // Engine ko bevakoof banaya ki screen ki size 800px (Desktop) hai
+                        windowWidth: 800,
+                        width: 800,
+                        scrollY: 0
                     },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    // YAHI WO LINE HAI JISNE PICHHLI BAAR CHOPPING ERROR KIYA THA (AB WAPAS AA GAYA HAI)
+                    pagebreak: { mode: ['css', 'legacy'] } 
                 };
 
-                html2pdf().set(opt).from(container).save().then(() => {
-                    document.body.removeChild(container);
-                    btn.disabled = false;
-                    btnText.innerText = "PDF";
+                html2pdf().set(opt).from(element).save().then(() => {
+                    restoreWebsiteState();
                 }).catch((err) => {
                     console.error("PDF Generation Error:", err);
                     alert("Error generating PDF.");
-                    document.body.removeChild(container);
+                    restoreWebsiteState();
+                });
+
+                function restoreWebsiteState() {
+                    // Mobile ko wapas normal size me laao
+                    document.body.classList.remove('is-printing');
+                    
+                    // Original theme wapas laao
+                    if (originalIsLight) {
+                        document.body.classList.add('light-mode');
+                    } else {
+                        document.body.classList.remove('light-mode');
+                    }
+
+                    // User ko wahi scroll karwao jahan se usne download dabaya tha
+                    window.scrollTo(0, originalScroll);
+
                     btn.disabled = false;
                     btnText.innerText = "PDF";
-                });
-            }, 500);
+                }
+            }, 200);
         }
     </script>
 </body>
